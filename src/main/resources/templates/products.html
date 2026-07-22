@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн-магазин</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<h1>Товары</h1>
+
+<div th:if="${message}" class="message" th:text="${message}"></div>
+
+<h2>Добавить товар</h2>
+<form action="/products" method="post">
+    <div class="form-group">
+        <label for="name">Название:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+        <label for="description">Описание:</label>
+        <input type="text" id="description" name="description">
+    </div>
+    <div class="form-group">
+        <label for="price">Цена:</label>
+        <input type="number" id="price" name="price" step="0.01" min="0" required>
+    </div>
+    <div class="form-group">
+        <label for="category">Категория:</label>
+        <input type="text" id="category" name="category" required>
+    </div>
+    <div class="form-group">
+        <label for="image">Изображение</label>
+        <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <button type="submit">Создать товар</button>
+</form>
+
+<hr>
+
+
+<h2>Существующие товары</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Цена</th>
+        <th>Категория</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.description} ?: ''"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.category}"></td>
+        <td>
+            <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Удалить товар?')">Удалить</button>
+            </form>
+        </td>
+        <td>
+            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-secondary">Редактировать</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

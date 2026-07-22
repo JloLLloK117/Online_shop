@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Корзина — STORE</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск товаров…" aria-label="Поиск">
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="cart-container">
+
+        <div class="cart-header">
+            <h1>🛒 Корзина</h1>
+        </div>
+
+        <div class="cart-items" th:unless="${#lists.isEmpty(cartItems)}">
+            <div class="cart-item" th:each="item : ${cartItems}">
+
+                <div class="product-image">
+                    <img th:src="${item.imageUrl}"
+                         th:alt="${item.name}"
+                         onError="this.onerror=null; this.src='/images/default.jpg'">
+                </div>
+
+                <div class="item-info">
+                    <div class="item-name" th:text="${item.name}"></div>
+                    <div class="item-price" th:text="${item.price} + ' ₽'"></div>
+                    <div class="item-quantity" th:text="'Количество: ' + ${item.quantity}"></div>
+                </div>
+                <form th:action="@{/cart/remove/{id}(id=${item.productId})}" method="post" class="remove-form">
+                    <button type="submit" class="btn btn-danger">🗑️ Удалить</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="empty-cart" th:if="${#lists.isEmpty(cartItems)}">
+            Корзина пуста.
+        </div>
+
+        <div class="total" th:unless="${#lists.isEmpty(cartItems)}">
+            <span>Итого:</span>
+            <span th:text="${totalAmount} + ' ₽'"></span>
+        </div>
+
+        <div style="padding: 20px; text-align: center;">
+            <a href="/order" class="btn btn-primary btn-block">Оформить заказ</a>
+            <a th:if="${#lists.isEmpty(cartItems)}" href="/shop" class="back-link">← Вернуться в магазин</a>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

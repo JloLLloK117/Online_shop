@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Админка — Заказы</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-NEW { background: #e6f4ea; color: #137333; }
+        .status-PROCESSING { background: #fff8e1; color: #9a6e02; }
+        .status-SHIPPED { background: #e6f4ff; color: #0d6efd; }
+        .status-DELIVERED { background: #e6f4ea; color: #137333; }
+        .status-CANCELLED { background: #fce8e6; color: #c5221f; }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .order-id {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .order-details {
+            margin: 12px 0;
+            color: #4a5568;
+        }
+        .items-list {
+            margin: 12px 0;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #2d3748;
+        }
+        .status-form {
+            margin-top: 12px;
+        }
+        select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        .btn-update {
+            background: #2f855a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE Admin</a>
+    </div>
+</header>
+
+<main style="max-width: 900px;">
+    <h1 style="margin: 24px 0; color: #2d3748;">📦 Заказы</h1>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="empty-cart">
+        Нет заказов.
+    </div>
+
+    <div class="order-card" th:each="order : ${orders}">
+        <div class="order-header">
+            <div class="order-id">Заказ №<span th:text="${order.id}"></span></div>
+            <span class="status-badge"
+                  th:classappend="'status-' + ${order.status}"
+                  th:text="${order.status.displayName}"></span>
+        </div>
+
+        <div class="order-details">
+            <div><strong th:text="${order.customerName}"></strong></div>
+            <div th:text="${order.phone}"></div>
+            <div th:text="${order.address}"></div>
+            <div th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}"></div>
+            <div><strong>Итого:</strong> <span th:text="${order.totalAmount} + ' ₽'"></span></div>
+        </div>
+
+        <div class="items-list">
+            <div class="item-row" th:each="item : ${order.items}">
+                <span th:text="${item.productName} + ' (' + ${item.quantity} + ' шт)'"></span>
+                <span th:text="${item.getTotalPrice()} + ' ₽'"></span>
+            </div>
+        </div>
+
+        <form th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+              method="post"
+              class="status-form">
+            <select name="status">
+                <option th:each="s : ${T(com.example.onlinestore.entity.Order.Status).values()}"
+                        th:value="${s}"
+                        th:text="${s.displayName}"
+                        th:selected="${s == order.status}">
+                </option>
+            </select>
+            <button type="submit" class="btn-update">Обновить</button>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

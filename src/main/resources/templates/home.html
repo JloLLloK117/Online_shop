@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>STORE — Интернет-магазин техники</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE</a>
+
+        <a href="/about" style="margin-left: 24px; color: #4a5568; text-decoration: none;">О нас</a>
+    </div>
+</header>
+
+<main>
+
+
+    <div class="hero">
+        <h1>Добро пожаловать в STORE</h1>
+        <p>Надёжная техника, книги и товары для дома — с доставкой по России</p>
+        <a href="/shop" class="btn btn-primary">Перейти в каталог</a>
+    </div>
+
+
+    <div class="section">
+        <h2 class="section-title">Категории</h2>
+        <div class="categories">
+            <a href="/shop?category=Электроника" class="category-card">
+                <div class="category-icon">📱</div>
+                <div>Электроника</div>
+            </a>
+            <a href="/shop?category=Компьютеры" class="category-card">
+                <div class="category-icon">💻</div>
+                <div>Компьютеры</div>
+            </a>
+            <a href="/shop?category=Быт" class="category-card">
+                <div class="category-icon">🍳</div>
+                <div>Бытовая техника</div>
+            </a>
+            <a href="/shop?category=Книги" class="category-card">
+                <div class="category-icon">📚</div>
+                <div>Книги</div>
+            </a>
+            <a href="/shop?category=Одежда" class="category-card">
+                <div class="category-icon">👕</div>
+                <div>Одежда</div>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="section">
+        <h2 class="section-title">Рекомендуем</h2>
+        <div class="products-grid" th:unless="${#lists.isEmpty(featuredProducts)}">
+            <div class="product-card" th:each="product : ${featuredProducts}">
+                <div class="product-image">
+                    <img th:src="${product.imageUrl}"
+                         th:alt="${product.name}"
+                         onError="this.onerror=null; this.src='/images/default.jpg'">
+                </div>
+                <div class="card-body">
+                    <div class="product-name" th:text="${product.name}"></div>
+                    <div class="product-price" th:text="${product.price} + ' ₽'"></div>
+                    <button class="btn btn-secondary btn-block"
+                            th:data-product-id="${product.id}"
+                            onclick="addToCart(this)">
+                        В корзину
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="empty-cart" th:if="${#lists.isEmpty(featuredProducts)}">
+            Товары скоро появятся.
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 STORE — Интернет-магазин</p>
+</footer>
+<script>
+    function addToCart(button) {
+        const productId = button.getAttribute('data-product-id');
+
+        fetch(`/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Обновляем корзину в шапке
+                const cartCount = document.querySelector('.cart-icon span');
+                const cartLink = document.querySelector('.cart-icon');
+                if (cartCount) cartCount.textContent = data.cartItemCount;
+                if (cartLink) cartLink.title = `Корзина: ${data.cartTotalAmount} ₽`;
+
+                // Визуальная обратная связь
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+
+                button.innerHTML = '✓ В корзине';
+                button.disabled = true;
+                button.className = 'btn btn-success';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                    button.className = originalClasses;
+                }, 1500);
+            }
+        })
+        .catch(err => {
+            alert('Ошибка добавления в корзину');
+            console.error(err);
+        });
+    }
+</script>
+</body>
+</html>

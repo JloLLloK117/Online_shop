@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>STORE — Интернет-магазин</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE</a>
+        <a href="/about" style="margin-left: 24px; color: #4a5568; text-decoration: none;">О нас</a>
+        <form th:action="@{/shop}" method="get" class="search-form">
+            <input type="text"
+                   name="query"
+                   th:value="${searchQuery}"
+                   placeholder="Поиск товаров…"
+                   aria-label="Поиск"
+                   id="searchInput">
+            <input type="hidden" name="category" th:value="${selectedCategory}">
+        </form>
+
+        <div id="suggestions" class="suggestions"></div>
+        <a th:href="@{/cart}" class="cart-icon" th:title="'Корзина: ' + ${cartTotalAmount} + ' ₽'">
+            🛒 <span th:text="${cartItemCount} ?: 0"></span>
+        </a>
+    </div>
+</header>
+
+<div th:if="${searchQuery}" class="search-info">
+    Результаты поиска для: <strong th:text="${searchQuery}"></strong>
+    <a th:href="@{/shop}">[Сбросить]</a>
+</div>
+
+<div class="category-nav">
+    <ul>
+        <li><a th:href="@{/shop}">Все товары</a></li>
+        <li><a th:href="@{/shop(category='Электроника')}">Электроника</a></li>
+        <li><a th:href="@{/shop(category='Компьютеры')}">Компьютеры</a></li>
+        <li><a th:href="@{/shop(category='Быт')}">Бытовая техника</a></li>
+        <li><a th:href="@{/shop(category='Книги')}">Книги</a></li>
+        <li><a th:href="@{/shop(category='Одежда')}">Одежда</a></li>
+    </ul>
+</div>
+
+<main>
+    <h2 class="section-title">Ассортимент</h2>
+
+    <div class="products-grid" th:unless="${#lists.isEmpty(products)}">
+        <div class="product-card" th:each="product : ${products}">
+            <div class="product-image">
+                <img th:src="${product.imageUrl}"
+                     th:alt="${product.name}"
+                     onError="this.onerror=null; this.src='/images/default.jpg'">
+            </div>
+            <div class="card-body">
+                <div class="product-name" th:text="${product.name}"></div>
+                <div class="product-description" th:text="${product.description} ?: ''"></div>
+                <div class="product-price" th:text="${product.price} + ' ₽'"></div>
+                <div class="product-category" th:text="${product.category}"></div>
+                <button class="btn btn-secondary btn-block"
+                        th:data-product-id="${product.id}"
+                        onclick="addToCart(this)">
+                    В корзину
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(products)}">
+        Каталог временно пуст.
+    </div>
+</main>
+
+<script>
+    function addToCart(button) {
+        const productId = button.getAttribute('data-product-id');
+
+        fetch(`/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const cartCount = document.querySelector('.cart-icon span');
+                const cartLink = document.querySelector('.cart-icon');
+                if (cartCount) cartCount.textContent = data.cartItemCount;
+                if (cartLink) cartLink.title = `Корзина: ${data.cartTotalAmount} ₽`;
+
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+
+                button.innerHTML = '✓ В корзине';
+                button.disabled = true;
+                button.className = 'btn btn-success';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                    button.className = originalClasses;
+                }, 1500);
+            }
+        })
+        .catch(err => {
+            alert('Ошибка добавления в корзину');
+            console.error(err);
+        });
+    }
+    document.getElementById('searchInput').addEventListener('input', function() {
+    const query = this.value.trim();
+    const suggestionsDiv = document.getElementById('suggestions');
+
+    if (query.length > 2) {
+        fetch(`/api/suggestions?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(suggestions => {
+                suggestionsDiv.innerHTML = '';
+
+                if (suggestions.length > 0) {
+                    suggestions.forEach(suggestion => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.textContent = suggestion;
+                        div.onclick = () => {
+                            document.getElementById('searchInput').value = suggestion;
+                            suggestionsDiv.innerHTML = '';
+                        };
+                        suggestionsDiv.appendChild(div);
+                    });
+                } else {
+                    suggestionsDiv.innerHTML = '<div class="suggestion-item">Ничего не найдено</div>';
+                }
+            });
+    } else {
+        suggestionsDiv.innerHTML = '';
+    }
+});
+</script>
+</body>
+</html>

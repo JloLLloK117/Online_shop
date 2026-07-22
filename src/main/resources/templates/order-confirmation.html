@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ оформлен — STORE</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск товаров…" aria-label="Поиск">
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1>✅ Заказ оформлен!</h1>
+        </div>
+        <div style="padding: 30px; text-align: center;">
+            <p>Спасибо за покупку. С вами свяжутся в ближайшее время.</p>
+            <div style="font-size: 1.2em; margin: 20px 0; color: #2d3748;">
+                Номер заказа: <strong th:text="${order.id}"></strong>
+            </div>
+            <a href="/shop" class="btn btn-secondary">Продолжить покупки</a>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!-- src/main/resources/templates/about.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>О нас — STORE</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: #4a5568;
+        }
+        .contact-icon {
+            background: #f0fff4;
+            color: #2f855a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .working-hours {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #2f855a;
+        }
+        .map-placeholder {
+            background: #f8fafc;
+            height: 300px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">STORE</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск товаров…" aria-label="Поиск">
+        </div>
+        <a th:href="@{/cart}" class="cart-icon" th:title="'Корзина: ' + ${cartTotalAmount} + ' ₽'">
+            🛒 <span th:text="${cartItemCount} ?: 0"></span>
+        </a>
+    </div>
+</header>
+
+<main>
+    <div class="about-content">
+
+        <div class="section">
+            <h2>О нас</h2>
+            <p>
+                Интернет-магазин <strong>STORE</strong> — ваш надёжный партнёр в мире технологий, книг и товаров для дома.
+                Мы работаем с 2026 года и за это время зарекомендовали себя как честный и ответственный продавец.
+            </p>
+            <p>
+                Наша миссия — сделать покупки онлайн простыми, удобными и безопасными.
+                Мы тщательно отбираем товары от проверенных поставщиков и гарантируем качество каждой позиции.
+            </p>
+            <p>
+                Благодаря прямым договорам с производителями мы предлагаем конкурентные цены
+                и оперативную доставку по всей России.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Контакты</h2>
+
+            <div class="contact-item">
+                <div class="contact-icon">📍</div>
+                <div><strong>Адрес:</strong> г. Москва, ул. Тверская, д. 15, офис 305</div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-icon">📞</div>
+                <div><strong>Телефон:</strong> <a href="tel:+74951234567">+7 (495) 123-45-67</a></div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-icon">✉️</div>
+                <div><strong>Email:</strong> <a href="mailto:info@store-shop.ru">info@store-shop.ru</a></div>
+            </div>
+
+            <div class="working-hours">
+                <strong>Режим работы:</strong><br>
+                Пн-Пт: 9:00 - 20:00<br>
+                Сб-Вс: 10:00 - 18:00
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Как нас найти</h2>
+            <div class="map-placeholder">
+                🗺️ Карта будет здесь<br>
+                <small>(в продакшене можно подключить Яндекс.Карты или Google Maps)</small>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Доставка и оплата</h2>
+            <p>
+                <strong>Доставка:</strong> По Москве — 1-2 дня, по России — 2-7 дней.<br>
+                Стоимость доставки рассчитывается автоматически при оформлении заказа.
+            </p>
+            <p>
+                <strong>Оплата:</strong> Банковской картой онлайн, при получении наличными или картой,
+                через СБП (Система быстрых платежей).
+            </p>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 STORE — Интернет-магазин</p>
+</footer>
+
+</body>
+</html>
